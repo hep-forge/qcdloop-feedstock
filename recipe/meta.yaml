@@ -1,0 +1,36 @@
+{% set versions = {
+    "2.0.9": "6ffbd371658726054b903dce9a7855ac02b258eac59e2ee13524dda9e278f23b"
+} %}
+
+
+{% set version = environ.get('COMMIT_VERSION', None) %}
+{% set version = version or versions.keys()|first %}
+{% set version = version|string %}
+
+package:
+  name: {{ environ.get('ANACONDA_PACKAGE', "qcdloop")|string|lower }}
+  version: {{ environ.get('ANACONDA_VERSION', version)|replace("-", ".") }}
+
+source:
+  url: "https://github.com/scarrazza/qcdloop/archive/refs/tags/{{ version }}.tar.gz"
+  {% if versions.get(version, None) %}
+  sha256: {{ versions.get(version) }}
+  {% endif %}
+
+requirements:
+  build:
+    - {{ compiler('gfortran') }}
+    - {{ compiler('cxx') }}
+    - {{ compiler('c') }}
+
+    - cmake
+    - make
+
+about:
+  home: "https://github.com/scarrazza/qcdloop"
+  license: "GPL-3.0"
+  summary: "Object-oriented one-loop scalar Feynman integrals framework"
+
+extra:
+  recipe-maintainers:
+    - meiyasan
