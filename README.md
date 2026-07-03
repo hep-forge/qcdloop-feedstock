@@ -1,5 +1,6 @@
 # qcdloop-feedstock
 
+[![hep-forge](https://img.shields.io/badge/package-hep--forge%2Fqcdloop-orange.svg)](https://anaconda.org/hep-forge/qcdloop)
 [![Build & Upload](https://github.com/hep-forge/qcdloop-feedstock/actions/workflows/autoupload.yml/badge.svg)](https://github.com/hep-forge/qcdloop-feedstock/actions/workflows/autoupload.yml)
 [![Anaconda Version](https://anaconda.org/hep-forge/qcdloop/badges/version.svg)](https://anaconda.org/hep-forge/qcdloop)
 [![Anaconda Platforms](https://anaconda.org/hep-forge/qcdloop/badges/platforms.svg)](https://anaconda.org/hep-forge/qcdloop)
@@ -9,6 +10,16 @@ Builds linux-amd64 + linux-arm64 in one matrix workflow and uploads to the
 [hep-forge](https://anaconda.org/hep-forge) Anaconda channel.
 
 Object-oriented one-loop scalar Feynman integrals framework
+
+## Architectures
+
+| Architecture | Latest published |
+|--------------|------------------|
+| linux-amd64 (`linux-64`) | ✅ `2.0.9` |
+| linux-arm64 (`linux-aarch64`) | ❌ not published |
+
+_As of the last feedstock render; the badges above are live._
+
 
 ## Install
 
