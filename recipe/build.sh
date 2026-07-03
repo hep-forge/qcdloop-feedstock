@@ -1,5 +1,11 @@
 #! /usr/bin/bash
 
+# upstream CMakeLists.txt:23 hardcodes x86 tuning flags that aarch64
+# gcc rejects
+if [ "$(uname -m)" != "x86_64" ]; then
+    sed -i 's/-march=nocona //g; s/-mtune=haswell //g' CMakeLists.txt
+fi
+
 mkdir build
 cd build
 
