@@ -21,6 +21,11 @@ source:
 
 
 build:
+  # src/qcdloop/types.h hard-includes <quadmath.h> for its extended-
+  # precision "qdouble" type; conda-forge's aarch64 GCC doesn't ship
+  # libquadmath (x86-only), and there's no portable substitute short of
+  # rewriting qcdloop's quad-precision code -- linux-64 only for now.
+  skip: true  # [aarch64]
   run_exports:
     - {{ pin_subpackage(name, max_pin="x.x.x") }}
 
