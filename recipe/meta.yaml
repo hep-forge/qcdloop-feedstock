@@ -1,7 +1,6 @@
 {% set versions = {
-    "2.0.9": "6ffbd371658726054b903dce9a7855ac02b258eac59e2ee13524dda9e278f23b"
+    "1.98": "697f1ff5bcb3a19066f1a451db22062b96f3fb854994a7635473c2dfb4149b9f"
 } %}
-
 
 {% set version = environ.get('COMMIT_VERSION', None) %}
 {% set version = version or versions.keys()|first %}
@@ -14,34 +13,39 @@ package:
   version: {{ environ.get('ANACONDA_VERSION', version)|replace("-", ".") }}
 
 source:
-  url: "https://github.com/scarrazza/qcdloop/archive/refs/tags/{{ version }}.tar.gz"
+  # qcdloop.fnal.gov blocks conda-build's downloader (Cloudflare 403s the
+  # requests-library user agent) -- mirrored as a GitHub release asset instead
+  url: "https://github.com/hep-forge/qcdloop-feedstock/releases/download/source-mirror-{{ version }}/QCDLoop-{{ version }}.tar.gz"
   {% if versions.get(version, None) %}
   sha256: {{ versions.get(version) }}
   {% endif %}
 
-
 build:
-  # src/qcdloop/types.h hard-includes <quadmath.h> for its extended-
-  # precision "qdouble" type; conda-forge's aarch64 GCC doesn't ship
-  # libquadmath (x86-only), and there's no portable substitute short of
-  # rewriting qcdloop's quad-precision code -- linux-64 only for now.
-  skip: true  # [aarch64]
-  run_exports:
-    - {{ pin_subpackage(name, max_pin="x.x.x") }}
+  number: 0
 
 requirements:
   build:
+    - {{ stdlib('c') }}
     - {{ compiler('gfortran') }}
-    - {{ compiler('cxx') }}
-    - {{ compiler('c') }}
-
-    - cmake
     - make
+    - libtool
+
+test:
+  commands:
+    - test -f $PREFIX/lib/libqcdloop.a
+    - test -f $PREFIX/include/ql/qldiffi2.mod
 
 about:
-  home: "https://github.com/scarrazza/qcdloop"
-  license: "GPL-3.0"
-  summary: "Object-oriented one-loop scalar Feynman integrals framework"
+  home: "https://qcdloop.fnal.gov/"
+  license: "MIT"
+  summary: "QCDLoop: one-loop scalar Feynman integrals (original Fortran line, Ellis & Zanderighi)"
+  description: |
+    The original Fortran QCDLoop by Ellis and Zanderighi, evaluating
+    one-loop scalar Feynman integrals close to four dimensions. This is
+    the legacy line -- same underlying software as hep-forge's `qcdloop`
+    on the main label, which is Carrazza's later C++ rewrite. Published
+    under the "legacy" Anaconda label since MCFM/xFitter-era codes still
+    depend on this exact Fortran API.
 
 extra:
   recipe-maintainers:

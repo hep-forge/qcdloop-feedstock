@@ -1,17 +1,13 @@
 #! /usr/bin/bash
+set -e
 
-# upstream CMakeLists.txt:23 hardcodes x86 tuning flags that aarch64
-# gcc rejects
-if [ "$(uname -m)" != "x86_64" ]; then
-    sed -i 's/-march=nocona //g; s/-mtune=haswell //g' CMakeLists.txt
-fi
+# the tarball's macOS AppleDouble resource-fork entries (._QCDLoop-1.98 etc.)
+# sit alongside the real QCDLoop-1.98/ dir, so conda-build's single-subdir
+# auto-descend doesn't trigger -- cd into it explicitly
+cd QCDLoop-1.98/ql
+make FC="${FC}" FFLAGS="${FFLAGS} -std=legacy -Wall -ffixed-line-length-none"
+cd ..
 
-mkdir build
-cd build
-
-# upstream 2.0.9 declares cmake_minimum_required < 3.5, which CMake 4 rejects
-cmake .. -DCMAKE_INSTALL_PREFIX=$PREFIX -DCMAKE_POLICY_VERSION_MINIMUM=3.5
-
-NPROC=$(nproc 2>/dev/null || sysctl -n hw.ncpu)
-make -j$NPROC
-make install
+mv ql/libqcdloop.a "${PREFIX}/lib/"
+mkdir -p "${PREFIX}/include/ql"
+mv ql/*.mod "${PREFIX}/include/ql/"
