@@ -38,6 +38,7 @@ requirements:
 
     - cmake
     - make
+    - sed        # build.sh's `sed -i` needs GNU semantics; BSD sed on macOS differs
 
 about:
   home: "https://github.com/scarrazza/qcdloop"
