@@ -10,7 +10,11 @@ mkdir build
 cd build
 
 # upstream 2.0.9 declares cmake_minimum_required < 3.5, which CMake 4 rejects
-cmake .. -DCMAKE_INSTALL_PREFIX=$PREFIX -DCMAKE_POLICY_VERSION_MINIMUM=3.5
+# ${CMAKE_ARGS} carries conda-build's own -DCMAKE_BUILD_TYPE=Release
+# (plus toolchain/strip paths) -- omitting it leaves CMAKE_BUILD_TYPE
+# unset (this project's own CMakeLists.txt never defaults it either),
+# producing an unoptimized, unstripped debug-info binary.
+cmake .. ${CMAKE_ARGS} -DCMAKE_INSTALL_PREFIX=$PREFIX -DCMAKE_POLICY_VERSION_MINIMUM=3.5
 
 NPROC=$(nproc 2>/dev/null || sysctl -n hw.ncpu)
 make -j$NPROC
