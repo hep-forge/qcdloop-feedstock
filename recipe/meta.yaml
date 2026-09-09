@@ -21,11 +21,17 @@ source:
 
 
 build:
-  # src/qcdloop/types.h hard-includes <quadmath.h> for its extended-
-  # precision "qdouble" type; conda-forge's aarch64 GCC doesn't ship
-  # libquadmath (x86-only), and there's no portable substitute short of
-  # rewriting qcdloop's quad-precision code -- linux-64 only for now.
-  skip: true  # [aarch64]
+  # aarch64 previously skipped: src/qcdloop/types.h hard-includes <quadmath.h>
+  # for its extended-precision "qdouble" type, and conda-forge's aarch64 GCC
+  # doesn't ship libquadmath (it is x86-only, because there long double is the
+  # 80-bit x87 format and a separate 128-bit type is therefore needed).
+  #
+  # No rewrite was needed after all. On aarch64 `long double` IS IEEE 754
+  # binary128 -- the identical format __float128 provides -- so the quad
+  # arithmetic is already present in libm under the long double names. A
+  # header-only shim (recipe/quadmath-shim.h) supplies GCC's `*q` spelling on
+  # top of it; see build.sh. Precision is unchanged, and the accompanying
+  # patch is inert on x86.
   run_exports:
     - {{ pin_subpackage(name, max_pin="x.x.x") }}
 
