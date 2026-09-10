@@ -16,7 +16,7 @@ Object-oriented one-loop scalar Feynman integrals framework
 | Architecture | Latest published | Recipe support |
 |--------------|------------------|----------------|
 | linux-amd64 (`linux-64`) | ✅ `2.0.9` | ✅ |
-| linux-arm64 (`linux-aarch64`) | ❌ not published yet | ✅ since the aarch64 shim (below) |
+| linux-arm64 (`linux-aarch64`) | ✅ `2.0.9` | ✅ since the aarch64 shim (below) |
 
 _As of the last feedstock render; the badges above are live._
 
@@ -45,10 +45,13 @@ x86:
   which had been discarding flags passed in by conda-build
 
 **Open item:** the aarch64 quad path has not yet been shown numerically
-identical to real libquadmath. The shipped example tests take `double` inputs,
-so they only constrain results to ~1e-16 rather than the ~1e-34 binary128
-allows. Building both architectures in CI and diffing the example output would
-close this.
+identical to real libquadmath. Both architectures now build in CI (first
+published aarch64 artifact: `2.0.9`, 2026-09-09), but that only proves the
+shim compiles and links -- the recipe has no `test:` section, so nothing has
+compared results between the two. The shipped example tests take `double`
+inputs, so they only constrain results to ~1e-16 rather than the ~1e-34
+binary128 allows. Diffing the example output across the amd64 and arm64 legs
+would close this.
 
 
 ## Install
