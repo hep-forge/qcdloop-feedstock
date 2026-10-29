@@ -17,19 +17,23 @@ set -euo pipefail
 # building WITHOUT the shim fails for exactly the original reason (no
 # quadmath.h) and nothing else.
 # ---------------------------------------------------------------------------
-patch -p1 --fuzz=0 < "${RECIPE_DIR}/patches/aarch64-portability.patch"
+# 2.1 supports aarch64 itself (long double as __float128 there) and no
+# longer hard-codes -march flags, so the patch and the shim are for 2.0.x.
+if [ "$(printf '%s\n' 2.1 "${PKG_VERSION}" | sort -V | head -1)" != "2.1" ]; then
+    patch -p1 --fuzz=0 < "${RECIPE_DIR}/patches/aarch64-portability.patch"
 
-if [ "$(uname -m)" != "x86_64" ]; then
-    # GCC ships libquadmath only where __float128 is a distinct type, i.e. x86,
-    # whose long double is the 80-bit x87 format. On aarch64 `long double` IS
-    # IEEE 754 binary128 (16 bytes, 113-bit mantissa) -- the same format
-    # __float128 provides -- so the arithmetic is already in libm under the
-    # long double names. The shim supplies GCC's `*q` spelling on top of it.
-    # This is a naming shim, not an emulation: precision is identical.
-    mkdir -p "${SRC_DIR}/quadmath-shim"
-    cp "${RECIPE_DIR}/quadmath-shim.h" "${SRC_DIR}/quadmath-shim/quadmath.h"
-    export CXXFLAGS="${CXXFLAGS:-} -I${SRC_DIR}/quadmath-shim"
-    export CFLAGS="${CFLAGS:-} -I${SRC_DIR}/quadmath-shim"
+    if [ "$(uname -m)" != "x86_64" ]; then
+        # GCC ships libquadmath only where __float128 is a distinct type, i.e. x86,
+        # whose long double is the 80-bit x87 format. On aarch64 `long double` IS
+        # IEEE 754 binary128 (16 bytes, 113-bit mantissa) -- the same format
+        # __float128 provides -- so the arithmetic is already in libm under the
+        # long double names. The shim supplies GCC's `*q` spelling on top of it.
+        # This is a naming shim, not an emulation: precision is identical.
+        mkdir -p "${SRC_DIR}/quadmath-shim"
+        cp "${RECIPE_DIR}/quadmath-shim.h" "${SRC_DIR}/quadmath-shim/quadmath.h"
+        export CXXFLAGS="${CXXFLAGS:-} -I${SRC_DIR}/quadmath-shim"
+        export CFLAGS="${CFLAGS:-} -I${SRC_DIR}/quadmath-shim"
+    fi
 fi
 
 mkdir build
