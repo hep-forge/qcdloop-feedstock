@@ -15,8 +15,8 @@ Object-oriented one-loop scalar Feynman integrals framework
 
 | Architecture | Latest published |
 |--------------|------------------|
-| linux-amd64 (`linux-64`) | ✅ `2.0.9` |
-| linux-arm64 (`linux-aarch64`) | ✅ `2.0.9` |
+| linux-amd64 (`linux-64`) | ✅ `2.1.0` |
+| linux-arm64 (`linux-aarch64`) | ✅ `2.1.0` |
 
 _As of the last feedstock render; the badges above are live._
 
