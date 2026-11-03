@@ -33,6 +33,10 @@ build:
   # header-only shim (recipe/quadmath-shim.h) supplies GCC's `*q` spelling on
   # top of it; see build.sh. Precision is unchanged, and the accompanying
   # patch is inert on x86.
+  #
+  # macOS arm64 has no binary128 at all: long double is the 64-bit double
+  # there and clang has no __float128, so qdouble cannot be built.
+  skip: true  # [osx]
   run_exports:
     - {{ pin_subpackage(name, max_pin="x.x.x") }}
 
